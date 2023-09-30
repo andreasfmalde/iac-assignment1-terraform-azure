@@ -53,3 +53,7 @@ resource "azurerm_linux_virtual_machine" "vm-vm" {
     version   = "latest"
   }
 }
+
+output "PublicIP" {
+  value = azurerm_public_ip.vm-pip.ip_address
+}

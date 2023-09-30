@@ -55,3 +55,7 @@ module "VM" {
     source_image_sku = var.source_image_sku
   
 }
+
+output "PublicIP" {
+  value = module.VM.PublicIP
+}
