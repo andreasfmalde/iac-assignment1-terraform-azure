@@ -101,3 +101,36 @@ To run this project and successfully deploy the infrastructure to Azure, there a
 Another prerequisite is to have a connection between the local computer and the azure account. For this to work, one need to have the Azure CLI installed on the local computer. The Azure CLI is a command-line tool that can be used to manage Azure resources. After it is installed on the computer, one need to create a service principal/ app registration on Azure which authenticates the CLI to the Azure account.
 
 The last but most important prerequisite is to have Terraform installed on the local computer. 
+
+## Images of deployment
+This section will show some images of the deployment of the infrastructure to Azure. The images are taken from the terminal and the Azure portal.
+
+ - **Terraform init** - Initalization of the terraform project. Provider plugins are installed and the backend is configured.
+    ![terraform init](images/terraformInit.png)
+
+- **Terraform plan** - Plan the project and see what changes will be made to the infrastructure.
+    ![terraform plan](images/planCommand.png)
+
+- **Terraform apply ./main.tfplan** - Look at what will be added. In this case 18 objects will be added.
+    ![terraform apply](images/planApply.png)
+
+- **Terraform apply complete** - A message indicating a successfull deployment of the infrastructure. All 18 objects are added.
+    ![terraform apply complete](images/applyComplete.png)
+
+- **Resource groups are found in Azure portal** - The four resource groups are found in the Azure portal. The resource groups are named accoirding to the modules.
+    ![resource groups](images/deployedResourceGroups.png)
+
+- **Public IP used to SSH into the VM** - The public IP is used to SSH into the VM. The username and password is retrieved from the key vault.
+    ![public ip](images/publicIP.png)
+
+- **SSH into the VM** - The VM is accessed using the public IP and the username and password retrieved from the key vault. The local computer is connected to the NTNU VPN and get the NTNU IP address, which is added in the security rule. This is the resason why the VM can be accessed from the computer.
+    ![ssh into vm](images/sshLogin.png)
+
+- **Security rule allowing NTNU IPs to SSH into the VM** - There is a inbound rule set to allow traffic on port 22 from the NTNU IP address.
+    ![security rule](images/securityRule.png)
+
+- **Terraform destroy** - The infrastructure is destroyed to prevent unnecessary costs. A confirmation request is shown as well as an overview over all the changes that will be made(all objects that will be destroyed).
+![terraform destroy](images/terraformDestroy.png)
+
+- **Terraform destroy complete** - A message indicating a successfull destruction of the infrastructure. All 18 objects are destroyed.
+![terraform destroy complete](images/destroyComplete.png)
