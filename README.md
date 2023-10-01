@@ -54,23 +54,37 @@ All of the four module folders contain a similar file structure as the root fold
 This section will provide more in depth information about the different modules used in the project. This includes which Azure resources they provision and manage, as well as how the file structure is set up.
 ### Key Vault
 The keyvault module is responsible for setting up a Azure Key Vault with two secrets. The following azure resources are provisioned and managed by the keyvault module:
-- **Azure Resource Group** - The resource group contains all resources related to the key vault.
+- **Azure Resource Group** - Contains all resources related to the key vault.
 - **Hashicorp Random String** - Used to generate a random string used as part of the name of the key vault to make it globally unique.
-- **Azure Key Vault** - The key vault is used to store secrets as mentioned above. Access policies are set up to allow this app registration to access the key vault.
+- **Azure Key Vault** - Used to store secrets as mentioned above. Access policies are set up to allow this app registration to access the key vault.
 - **Azure Key Vault Secret** - One secret used for the login credentials for the virtual machine and one secret used for the access key for the storage account as mentioned above.
 
 The keyvault folder contains four files. The **main.tf** file are used to provision and manage the resources mentioned above. The **variables.tf** file contains all the variables used in the module. The **outputs.tf** file contains the output of the key vault id and the name of the secret holding the login credentials which is used by the VM module. The **locals.tf** file are used to combine the username and the password for the VM into a map/object.
 
 ### Network
 The network moudle is responsible for setting up a network making it possible for the different resources to communicate with each other. The following azure resources are provisioned and managed by the network module:
-- **Azure Resource Group** - The resource group contains all resources related to the network.  
-- **Azure Virtual Network** - The virtual network is used to create a private network allowing the resources in the network to communicate with each other.
-- **Azure Subnet** - The subnet is used to divide the virtual network into smaller networks. In this project the subnet is used to create a smaller network for communication between the resources. There is also a network security group connected to the subnet defining rules for inbound and outbound traffic.
-- **Azure Network Security Group** - The network security group is used to define rules for inbound and outbound traffic as explained above. The security group conains a security rule allowing for inboud traffic on port 22 from a specific IP which can be provided through the tfvars file.
+- **Azure Resource Group** - Contains all resources related to the network.  
+- **Azure Virtual Network** - Used to create a private network allowing the resources in the network to communicate with each other.
+- **Azure Subnet** - Used to divide the virtual network into smaller networks. In this project the subnet is used to create a smaller network for communication between the resources. There is also a network security group connected to the subnet defining rules for inbound and outbound traffic.
+- **Azure Network Security Group** - Used to define rules for inbound and outbound traffic as explained above. The security group conains a security rule allowing for inboud traffic on port 22 from a specific IP which can be provided through the tfvars file.
 - There is also a last resource which is called **azurerm_subnet_network_security_group_association**. This resource is used by terraform and azurerm to associate the subnet with the network security group and will not be shown as a resource in Azure. 
 
 The network folder contains three files. The **main.tf** provision and manages the resources mentioned above. The **variables.tf** file contains the variables used in the module, and the **outputs.tf** contains the subnet id which is used by  the VM module to connect the VM to the subnet.
 
 ### Storage Account
+This module is responsible for setting up a storage account and a storage container which can be used to store other files. The following resources are provisioned and managed by the storage account module:
+- **Azure Resource Group** - Contains all resources related to the storage account.
+- **Hashicorp Random String** - Used to generate a random string as part of the name of the storage account to make it globally unique.
+- **Azure Storage Account** - Contains a storage container which can be used to store files.
+- **Azure Storage Container** - Can be used to store files.
+
+The storageaccount folder contains three files as well. THe main.tf file is used to provision and manage the resources mentioned above, while the variables.tf is where all the modules variables are defined. The outputs.tf file contains a single output which is the storage account primary access key. This values is sent to the Keyvault module and stored as a secret.
 
 ### Virtual Machine
+The virtual machine module is responsible for setting up a virtual machine and connecting it to the virtual network as well as providing a public IP making it accessible from the public internet. The following resources are provisioned and managed by the vm module:
+- **Azure Resource Group** - Contains all resources related to the virtual machine.
+- **Azure public IP** - Used to retrieve a public IP from Azure which makes it possible to access the virtual machine from the public internet.
+- **Azure Network Interface** - Used to connect the virtual machine to the subnet using the subnet id from the network module as well as connecting the public IP to the machine.
+- **Azure Linux Virtual Machine** - Used to create a linux virtual machine with the admin credentials retrieved from the key vault using the "azurerm_key_vault_secret" data source. 
+
+The vm folder only contains two files. The main.tf file contains the source code to provision the resources mentioned above. There is also an output in the main file, which outputs the public IP to the terminal, so there is no need to go to Azure Portal to see the IP address. The variables.tf file contains all the variables used in the module.
